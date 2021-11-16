@@ -13,7 +13,7 @@ document.getElementsByTagName("head")[0].appendChild(oScript);
  * DOM의 모든 버튼 (<Button>, <input type="button">,<a role="button"> 등) 클릭 시 발생하는 이벤트 (누름 상태 변경)
  * aria-pressed = "true" or "false"
  */
-$(document).on("click", ":button, [type='button', role='button', data-role='button']", function () {
+$(document).on("click", ":button, [type='button'], [role='button'], [data-role='button']", function () {
   if ($(this).attr("aria-pressed") === "true") { // aria-pressed 가 true(누름 상태)면 false 로 변경
     $(this).attr("aria-pressed", "false");
   } else { // aria-pressed 가 undefined 거나 false 면 true 로 변경
