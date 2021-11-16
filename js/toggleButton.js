@@ -18,8 +18,8 @@ if (!check){
 }
 
 // DOM 을 미리 로드시켜 라이브러리를 정상적으로 작동시키기 위함
-window.onload = function () {
-
+window.addEventListener('load', function(){
+  
   /**
    * 토글 버튼 이벤트
    * DOM의 모든 버튼 (<Button>, <input type="button">,<a role="button"> 등) 클릭 시 발생하는 이벤트 (누름 상태 변경)
@@ -28,13 +28,10 @@ window.onload = function () {
   $(document).on("click", ":button, [type='button'], [role='button'], [data-role='button']", function (e) {
     if ($(this).attr("aria-pressed") === "true") { // aria-pressed 가 true(누름 상태)면 false 로 변경
       $(this).attr("aria-pressed", "false");
-      $(this).val("false");
     } else { // aria-pressed 가 undefined 거나 false 면 true 로 변경
       $(this).attr("aria-pressed", "true");
-      $(this).val("true");
     }
   });
 
-
-}
+});
 
