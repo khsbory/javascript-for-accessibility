@@ -26,22 +26,12 @@ window.onload = function () {
    * aria-pressed = "true" or "false"
    */
   $(document).on("click", ":button, [type='button'], [role='button'], [data-role='button']", function (e) {
-    var previousStatus = $(this).get(0);
-    console.log(previousStatus)
     if ($(this).attr("aria-pressed") === "true") { // aria-pressed 가 true(누름 상태)면 false 로 변경
       $(this).attr("aria-pressed", "false");
       $(this).val("false");
     } else { // aria-pressed 가 undefined 거나 false 면 true 로 변경
       $(this).attr("aria-pressed", "true");
       $(this).val("true");
-    }
-
-    var nowStatus = $(this).get(0);
-    console.log(nowStatus)
-    if(previousStatus === nowStatus) {
-      alert("true");
-    } else {
-      alert("false");
     }
   });
 
