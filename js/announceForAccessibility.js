@@ -1,12 +1,21 @@
 /**
- * 제이쿼리 호출
- * head src에 제이쿼리 경로를 추가하여 사용할 수 있도록 함
+ * Jquery 라이브러리 최신 버전 호출
+ * 이미 최신 버전이 존재할 경우 호출하지 않음
  */
-var oScript = document.createElement("script");
-oScript.type = "text/javascript";
-oScript.charset = "utf-8";
-oScript.src = "https://code.jquery.com/jquery-3.6.0.min.js";
-document.getElementsByTagName("head")[0].appendChild(oScript);
+var headScript = document.getElementsByTagName("head")[0].getElementsByTagName("script");
+for (var i = 0, check = false; i < headScript.length; i++){
+  if ("https://code.jquery.com/jquery-latest.min.js" === headScript[i].src){
+    check = true;
+    break;
+  }
+}
+if (!check){
+  var oScript = document.createElement("script");
+  oScript.type = "text/javascript";
+  oScript.charset = "utf-8";
+  oScript.src = "https://code.jquery.com/jquery-latest.min.js";
+  document.getElementsByTagName("head")[0].appendChild(oScript);
+}
 
 /**
  * div 안 p 태그에 메시지 삽입 후 body 끝에 추가하며 2초 후 삭제하는 함수
