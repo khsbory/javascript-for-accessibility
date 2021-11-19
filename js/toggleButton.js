@@ -12,7 +12,6 @@ try {
   
   jQuery_version = jQuery_version[0] * 10 + jQuery_version[1];
   if (!(jQuery_version >= jQuery_minimum_version)){
-	  console.log("dd")
 	  document.getElementsByTagName("head")[0].appendChild(jScript);
   }
   
