@@ -42,25 +42,17 @@ window.addEventListener('load', function() {
   });
 
   $(document).on("click", ":button, [type='button'], [role='button'], [data-role='button']", function (e) {
-	if ($(this).attr("aria-pressed") === undefined) {  // aria-pressed 속성이 없을 경우 리턴
-		return;
+	if ($(this).attr("aria-pressed") === undefined) { return; } // aria-pressed 속성이 없을 경우 리턴
+	if (beforeAriaLabel !== undefined && beforeAriaLabel !== $(this).attr("aria-label")) { return; } // aria-label 이 없거나 값이 변경되지 않았을 경우
+	if (beforeAriaLabelledby !== undefined && beforeAriaLabelledby !== $(this).attr("aria-labelledby")) { return; }
+	if (beforeInnerText !== this.innerText) { return; } // innerHTML 의 값이 같지 않을 경우
+	if (beforeOuterHtml !== this.outerHTML){ return; }
+	
+	if ($(this).attr("aria-pressed") === "true") { // aria-pressed 가 true(누름 상태)면 false 로 변경
+		$(this).attr("aria-pressed", "false");
+	} else { // aria-pressed 가 undefined 거나 false 면 true 로 변경
+		$(this).attr("aria-pressed", "true");
 	}
-	if (beforeAriaLabel !== undefined && beforeAriaLabel !== $(this).attr("aria-label")) { // aria-label이 없거나 값이 변경되지 않았을 경우
-		return;
-	}
-	if (beforeAriaLabelledby !== undefined && beforeAriaLabelledby !== $(this).attr("aria-labelledby")) {
-		return;
-	}
-	if (beforeInnerText !== this.innerText) {
-		return;
-	}
-	if (beforeOuterHtml !== this.outerHTML){
-		if ($(this).attr("aria-pressed") === "true") { // aria-pressed 가 true(누름 상태)면 false 로 변경
-			$(this).attr("aria-pressed", "false");
-		} else { // aria-pressed 가 undefined 거나 false 면 true 로 변경
-			$(this).attr("aria-pressed", "true");
-			}
-		}
   });
 
 
