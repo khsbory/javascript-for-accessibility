@@ -26,7 +26,19 @@ window.addEventListener('load', function() {
       if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
         announceForAccessibility("");
       } else {
+        if (btn.getAttribute("aria-label")) {
+          var ua = navigator.userAgent.toLowerCase();
+          var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+          if(isAndroid) {
+            setTimeout(function() {
+              announceForAccessibility(btn.getAttribute("aria-label"));
+            }, 200);
+          } else {
+            announceForAccessibility("");
+          };
+        } else {
         announceForAccessibility(btn.textContent);
+        };
       };
           });
   });
