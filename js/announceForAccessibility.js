@@ -17,6 +17,19 @@ if (!check){
   document.getElementsByTagName("head")[0].appendChild(oScript);
 }
 
+window.addEventListener('load', function() {
+  var btns = document.querySelectorAll('[screen-reader-live]');
+  btns.forEach(function (btn) {
+    btn.addEventListener('click', function() {
+      if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
+        announceForAccessibility("");
+      } else {
+        announceForAccessibility(btn.textContent);
+      };
+          });
+  });
+});
+
 /**
  * div 안 p 태그에 메시지 삽입 후 body 끝에 추가하며 2초 후 삭제하는 함수
  * div 의 name 은 div_announceForAccessibility 를 사용함 (해당 태그를 삭제하기 위함)
@@ -30,11 +43,11 @@ function announceForAccessibility(message) {
 
   $("body").append(html); // body 끝에 div_announceForAccessibility 추가
 
-  setTimeout(function () { // 0.3초 후 p 태그에 message 추가
+  setTimeout(function () { // 0.02초 후 p 태그에 message 추가
     $("[name='p_announceForAccessibility']").text(message);
-  }, 300);
+  }, 20);
 
-  setTimeout(removeAnnounceForAccessibility, 2000); // 2초 후 div_announceForAccessibility 삭제
+  setTimeout(removeAnnounceForAccessibility, 500); // 0.5초 후 div_announceForAccessibility 삭제
 }
 
 /**
