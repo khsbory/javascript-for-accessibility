@@ -15,7 +15,8 @@ try {
 	  console.log("dd")
 	  document.getElementsByTagName("head")[0].appendChild(jScript);
   }
-} catch { // jQuery가 없어 에러가 발생한 경우 최신 버전을 적용함
+  
+} catch { // jQuery가 없을 경우 예외처리 하여 최신 버전을 적용함
 	document.getElementsByTagName("head")[0].appendChild(jScript);
 }
 
