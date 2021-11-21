@@ -33,14 +33,13 @@ window.addEventListener('load', function() {
     // 클릭한 버튼의 부모 요소 클래스를 lowerCase로 변환하여 가져옴
     var $parentClass = $(this).parent().attr("class") !== undefined ? $(this).parent().attr("class").toLowerCase() : "";
 
-      if ($parentClass !== "" && $parentClass.indexOf("up") > -1) { // 부모 요소 클래스 중에 up이 포함된 경우 ascending
-        $(this).parent().attr("aria-sort","ascending");
-        announceForAccessibility("오름차순 정렬됨");
+    if ($parentClass !== "" && $parentClass.indexOf("up") > -1) { // 부모 요소 클래스 중에 up이 포함된 경우 ascending
+      $(this).parent().attr("aria-sort","ascending");
+      announceForAccessibility("오름차순 정렬됨");
 
-      } else if ($parentClass !== "" && $parentClass.indexOf("down") > -1) { //부모 요소 클래스 중에 down이 포함된 경우 descending
-        $(this).parent().attr("aria-sort","descending");
-        announceForAccessibility("내림차순 정렬됨");
-
-      }
+    } else if ($parentClass !== "" && $parentClass.indexOf("down") > -1) { //부모 요소 클래스 중에 down이 포함된 경우 descending
+      $(this).parent().attr("aria-sort","descending");
+      announceForAccessibility("내림차순 정렬됨");
+    }
   });
 });
