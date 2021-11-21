@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>토글 버튼</title>
+  <style>
+    .annotate {
+      font-style: italic;
+      color: #366ed4;
+    }
+
+    [role="table"] {
+      display: table;
+    }
+
+    [role="table"] > div[id] {
+      display: table-caption;
+      font-style: italic;
+    }
+
+    [role="table"] [role="row"] {
+      display: table-row;
+    }
+
+    [role="table"] [role="cell"],
+    [role="table"] [role="columnheader"] {
+      display: table-cell;
+      padding: 0.125em 0.25em;
+      width: 8em;
+    }
+
+    [role="table"] [role="columnheader"] {
+      font-weight: bold;
+      border-bottom: thin solid #888;
+    }
+
+    [role="table"] [role="rowgroup"]:last-child [role="row"]:nth-child(odd) {
+      background-color: #ddd;
+    }
+
+    :root {
+      --text-color: #333;
+      --bg-color: #eee;
+      --col-header-color: #333;
+      --col-header-hover-color: #fff;
+    }
+
+    @media screen and (-ms-high-contrast: active),
+    screen and (forced-colors: active) {
+      :root {
+        --col-header-color: ButtonText;
+        --col-header-hover-color: WindowText;
+        --col-header-hover-color: CanvasText;
+      }
+    }
+
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto,
+      Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      line-height: 1.4;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+    }
+
+    #SVGsprites {
+      display: none;
+    }
+
+    main {
+      margin: 0 0 2em 0;
+    }
+
+    label {
+      margin-right: 2em;
+    }
+
+    table {
+      margin: 1em 0 0 0;
+      border-collapse: collapse;
+      border: 0.1em solid rgba(0, 0, 0, 0.1);
+    }
+
+    caption {
+      text-align: left;
+      font-style: italic;
+      padding: 0.25em 0.5em 0.5em 0.5em;
+    }
+
+    th,
+    td {
+      padding: 0.25em 0.5em 0.25em 1em;
+      vertical-align: text-top;
+      text-align: left;
+      text-indent: -0.5em;
+    }
+
+    td.sorted {
+      background-color: rgba(255, 255, 0, 0.15);
+    }
+
+    th {
+      vertical-align: bottom;
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    tr:nth-child(odd) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    td:nth-of-type(2) {
+      font-style: italic;
+    }
+
+    th:nth-of-type(3),
+    td:nth-of-type(3) {
+      text-align: right;
+    }
+
+    th:nth-of-type(6),
+    td:nth-of-type(6) {
+      text-align: center;
+      min-width: 4em;
+    }
+
+    th {
+      padding: 0;
+      text-indent: 0;
+    }
+
+    th > button {
+      background: transparent;
+      border: 1px solid transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      padding: 0.25em 0.5em 0.25em 1em;
+      white-space: nowrap;
+      width: 100%;
+      min-width: 4.5em;
+      display: grid;
+      grid-template-columns: minmax(2em, max-content) .65em auto;
+      grid-template-areas: "t a x" "t d x";
+    }
+
+    th > button > span {
+      grid-area: t;
+      padding-right: .5em;
+    }
+
+    th > button > .asc {
+      grid-area: a;
+      align-self: center;
+    }
+
+    th > button > .des {
+      grid-area: d;
+      align-self: center;
+    }
+
+    th > button::after {
+      content: "";
+      grid-area: x;
+    }
+
+    th > button:focus,
+    th > button:hover {
+      color: #fff;
+      color: var(--col-header-hover-color);
+      background-color: #666;
+      outline: none;
+    }
+
+    th > button svg.sort {
+      fill: transparent;
+      stroke: var(--col-header-color);
+      max-width: .65em;
+      max-height: 1.2em;
+    }
+
+    [aria-sort="ascending"] > button svg.asc {
+      stroke: var(--col-header-color);
+      fill: var(--col-header-color);
+    }
+
+    [aria-sort="descending"] > button svg.des {
+      stroke: var(--col-header-color);
+      fill: var(--col-header-color);
+    }
+
+    th:focus > button svg.sort, th:hover > button svg.sort, th:focus-within > button svg.sort {
+      stroke: var(--col-header-hover-color);
+    }
+
+    [aria-sort="ascending"] > button:focus svg.asc,
+    [aria-sort="ascending"] > button:hover svg.asc,
+    [aria-sort="descending"] > button:focus svg.des,
+    [aria-sort="descending"] > button:hover svg.des {
+      stroke: var(--col-header-hover-color);
+      fill: var(--col-header-hover-color);
+    }
+
+    /* Method to visually hide something but still */
+    /* make it available to screen readers */
+    .visually-hidden {
+      position: absolute;
+      top: auto;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+      width: 1px;
+      height: 1px;
+      white-space: nowrap;
+    }
+
+    /* Scrolling, responsive table container */
+    /* https://adrianroselli.com/2020/11/under-engineered-responsive-tables.html */
+
+    [role="region"][aria-labelledby][tabindex] {
+      overflow: auto;
+    }
+
+    [role="region"][aria-labelledby][tabindex]:focus {
+      outline: .1em solid rgba(0,0,0,.1);
+    }
+
+    /* Scrolling Visual Cue */
+
+    [role="region"][aria-labelledby][tabindex] {
+      background: linear-gradient(to right, var(--bg-color) 30%, rgba(255, 255, 255, 0)),
+      linear-gradient(to right, rgba(255, 255, 255, 0), var(--bg-color) 70%) 0 100%,
+      radial-gradient(
+              farthest-side at 0% 50%,
+              rgba(0, 0, 0, 0.2),
+              rgba(0, 0, 0, 0)
+      ),
+      radial-gradient(
+              farthest-side at 100% 50%,
+              rgba(0, 0, 0, 0.2),
+              rgba(0, 0, 0, 0)
+      )
+      0 100%;
+      background-repeat: no-repeat;
+      background-color: var(--bg-color);
+      background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+      background-position: 0 0, 100%, 0 0, 100%;
+      background-attachment: local, local, scroll, scroll;
+    }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Sortable Table1 <code>aria-describedby</code></h1>
+  <div role="region" aria-labelledby="Cap" tabindex="0">
+    <span id="SortHint" style="display:none;">Sort</span>
+    <table>
+      <caption id="Cap">Books I May or May Not Have Read</caption>
+      <thead>
+      <tr>
+        <th id="ColAuthor">
+          <button type="button" id="ColAuthorSortButton" onclick="toggleSort(this.id,'ColAuthor','1','SortNote')" aria-describedby="SortHint">
+            <span>Author</span>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort asc" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-asc"></use>
+            </svg>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort des" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-des"></use>
+            </svg>
+          </button>
+        </th>
+        <th id="ColTitle">
+          <button type="button" id="ColTitleSortButton" onclick="toggleSort(this.id,'ColTitle','2','SortNote')" aria-describedby="SortHint">
+            <span>Title</span>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort asc" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-asc"></use>
+            </svg>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort des" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-des"></use>
+            </svg>
+          </button>
+        </th>
+        <th id="ColYear">
+          <button type="button" id="ColYearSortButton" onclick="toggleSort(this.id,'ColYear','3','SortNote')" aria-describedby="SortHint">
+            <span>Year</span>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort asc" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-asc"></use>
+            </svg>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort des" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-des"></use>
+            </svg>
+          </button>
+        </th>
+        <th id="ColISBN13">
+          <button type="button" id="ColISBN13SortButton" onclick="toggleSort(this.id,'ColISBN13','4','SortNote')" aria-describedby="SortHint">
+            <span>ISBN-13</span>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort asc" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-asc"></use>
+            </svg>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort des" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-des"></use>
+            </svg>
+          </button>
+        </th>
+        <th id="ColISBN10">
+          <button type="button" id="ColISBN10SortButton" onclick="toggleSort(this.id,'ColISBN10','5','SortNote')" aria-describedby="SortHint">
+            <span>ISBN-10</span>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort asc" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-asc"></use>
+            </svg>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort des" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-des"></use>
+            </svg>
+          </button>
+        </th>
+        <th id="ColMood">
+          <button type="button" id="ColMoodSortButton" onclick="toggleSort(this.id,'ColMood','6','SortNote')" aria-describedby="SortHint">
+            <span>Mood</span>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort asc" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-asc"></use>
+            </svg>
+            <svg viewBox="0 0 425 233.7" focusable="false" class="sort des" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-sort-des"></use>
+            </svg>
+          </button>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Murasaki Shikibu<br>(<span lang="ja">紫 式部</span>, Lady Murasaki)</td>
+        <td>The Tale of Genji<br>(<span lang="ja">源氏物語</span>, Genji monogatari)</td>
+        <td>1021</td>
+        <td>9780142437148</td>
+        <td>014243714X</td>
+        <td>😣</td>
+      </tr>
+      <tr>
+        <td lang="es">Miguel De Cervantes</td>
+        <td>The Ingenious Gentleman Don Quixote of La Mancha</td>
+        <td>1605</td>
+        <td>9783125798502</td>
+        <td>3125798507</td>
+        <td>😢</td>
+      </tr>
+      <tr>
+        <td lang="fr">Gabrielle-Suzanne Barbot de Villeneuve</td>
+        <td lang="fr">La Belle et la Bête</td>
+        <td>1740</td>
+        <td>9781910880067</td>
+        <td>191088006X</td>
+        <td>😂</td>
+      </tr>
+      <tr>
+        <td>Sir Isaac Newton</td>
+        <td>The Method of Fluxions and Infinite Series: With Its Application to the Geometry of Curve-lines</td>
+        <td>1763</td>
+        <td>9781330454862</td>
+        <td>1330454863</td>
+        <td>🤔</td>
+      </tr>
+      <tr>
+        <td>Mary Shelley</td>
+        <td>Frankenstein; or, The Modern Prometheus</td>
+        <td>1818</td>
+        <td>9781530278442</td>
+        <td>1530278449</td>
+        <td>😨</td>
+      </tr>
+      <tr>
+        <td>Herman Melville</td>
+        <td>Moby-Dick; or, The Whale</td>
+        <td>1851</td>
+        <td>9781530697908</td>
+        <td>1530697905</td>
+        <td>😐</td>
+      </tr>
+      <tr>
+        <td>Emma Dorothy Eliza Nevitte Southworth</td>
+        <td>The Hidden Hand</td>
+        <td>1888</td>
+        <td>9780813512969</td>
+        <td>0813512964</td>
+        <td>🤐</td>
+      </tr>
+      <tr>
+        <td>F. Scott Fitzgerald</td>
+        <td>The Great Gatsby</td>
+        <td>1925</td>
+        <td>9780743273565</td>
+        <td>0743273567</td>
+        <td>😒</td>
+      </tr>
+      <tr>
+        <td>George Orwell</td>
+        <td>Nineteen Eighty-Four</td>
+        <td>1948</td>
+        <td>9780451524935</td>
+        <td>0451524934</td>
+        <td>😠</td>
+      </tr>
+      <tr>
+        <td>Nnedi Okorafor</td>
+        <td>Who Fears Death</td>
+        <td>2010</td>
+        <td>9780756406691</td>
+        <td>0008288747</td>
+        <td>😔</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="SortNote" class="visually-hidden"></div>
+
+</main>
+
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" id="SVGsprites">
+  <style>
+    .l { fill: none; stroke-width: 30; stroke-miterlimit: 10; }
+    .t { stroke: none; }
+  </style>
+  <defs>
+    <g id="icon-sort" aria-labeledby="title-sort" aria-describedby="desc-sort" role="image">
+      <title id="title-sort">Sort</title>
+      <desc id="desc-sort"></desc>
+      <path class="t" d="M20.4 233.7L212.5 41.6l192.1 192.1z"/>
+      <path class="l" d="M414.4 223.1L212.5 21.2 10.6 223.1"/>
+      <path class="t" d="M404.6 306L212.5 498.1 20.4 306z"/>
+      <path class="l" d="M10.6 316.6l201.9 201.9 201.9-201.9"/>
+    </g>
+    <g id="icon-sort-asc" aria-labeledby="title-sort-asc" aria-describedby="desc-sort-asc" role="image">
+      <title id="title-sort-asc">Sort Ascending</title>
+      <desc id="desc-sort-asc"></desc>
+      <path class="t" d="M20.4 233.7L212.5 41.6l192.1 192.1z"/>
+      <path class="l" d="M414.4 223.1L212.5 21.2 10.6 223.1"/>
+    </g>
+    <g id="icon-sort-des" aria-labeledby="title-sort-des" aria-describedby="desc-sort-des" role="image">
+      <title id="title-sort-des">Sort Descending</title>
+      <desc id="desc-sort-des"></desc>
+      <path class="t" d="M404.6 0L212.5 192.1 20.4 0z"/>
+      <path  class="l" d="M10.6 10.6l201.9 201.9L414.4 10.6"/>
+    </g>
+  </defs>
+</svg>
+<!--------------------------------------------------------------------->
+<h1>Sortable Table2 <code>columnheader</code></h1>
+<div role="table"
+     aria-label="Students"
+     aria-describedby="students_table_desc">
+  <div id="students_table_desc">
+  </div>
+  <div role="rowgroup">
+    <div role="row">
+      <span role="columnheader" class="SorTuP">
+        <a href="javascript:void(0);" role="button">role=button</a><br/>
+        <button>button</button><br/>
+        <a href="javascript:void(0);">anything</a>
+      </span>
+      <span role="columnheader" class="SorTuP">
+        <a href="javascript:void(0);" role="button">Last Name</a>
+      </span>
+      <span role="columnheader" class="SorTuP">
+        <a href="javascript:void(0);" role="button">Company</a>
+      </span>
+      <span role="columnheader" class="SorTuP">
+        <a href="javascript:void(0);" role="button">Address</a>
+      </span>
+    </div>
+  </div>
+  <div role="rowgroup">
+    <div role="row">
+      <span role="cell">
+        Fred
+      </span>
+      <span role="cell">
+        Jackson
+      </span>
+      <span role="cell">
+        Acme, Inc.
+      </span>
+      <span role="cell">
+        123 Broad St.
+      </span>
+    </div>
+    <div role="row">
+      <span role="cell">
+        Sara
+      </span>
+      <span role="cell">
+        James
+      </span>
+      <span role="cell">
+        Acme, Inc.
+      </span>
+      <span role="cell">
+        123 Broad St.
+      </span>
+    </div>
+    <div role="row">
+      <span role="cell">
+        Ralph
+      </span>
+      <span role="cell">
+        Jefferson
+      </span>
+      <span role="cell">
+        XYZ, Inc.
+      </span>
+      <span role="cell">
+        456 Main St.
+      </span>
+    </div>
+    <div role="row">
+      <span role="cell">
+        Nancy
+      </span>
+      <span role="cell">
+        Jensen
+      </span>
+      <span role="cell">
+        XYZ, Inc.
+      </span>
+      <span role="cell">
+        456 Main St.
+      </span>
+    </div>
+  </div>
+</div>
+<!--------------------------------------------------------------------->
+<script src="../../js/announceForAccessibility.js"></script>
+<script src="../../js/table-sortable.js"></script>
+<script>
+  function toggleSort(btnID, colID, colNum, regionID) {
+    var theButton = document.getElementById(btnID);
+    var theColumn = document.getElementById(colID);
+    var liveRegion = document.getElementById(regionID);
+    var sortedTDs = document.querySelectorAll(
+            "td:nth-child(" + colNum + "), *[role=cell]:nth-child(" + colNum + ")"
+    );
+    var currSort = theColumn.getAttribute("aria-sort");
+    if (currSort == "descending") {
+      clearSorts();
+      theColumn.setAttribute("aria-sort", "ascending");
+      liveRegion.innerHTML = "sorted up";
+    } else {
+      clearSorts();
+      theColumn.setAttribute("aria-sort", "descending");
+      liveRegion.innerHTML = "sorted down";
+    }
+    for (var i = 0; i < sortedTDs.length; i++) {
+      sortedTDs[i].classList.add("sorted");
+    }
+    setTimeout(function () {
+      liveRegion.innerHTML = "";
+    }, 1000);
+    // for the fake live region to see the output
+  }
+
+  function clearSorts() {
+    var thSort = document.querySelectorAll("*[aria-sort]");
+    var tdSort = document.querySelectorAll(".sorted");
+    var thBtn = document.querySelectorAll(
+            "th > button, *[role=columnheader] > button"
+    );
+    for (var i = 0; i < thSort.length; i++) {
+      thSort[i].removeAttribute("aria-sort");
+    }
+    for (var i = 0; i < tdSort.length; i++) {
+      tdSort[i].classList.remove("sorted");
+    }
+  }
+
+  // Manage live region for demo
+  function flipLiveRegion(val) {
+    var liveRegion = document.getElementById('SortNote');
+    if (val == 'off') {
+      liveRegion.removeAttribute('aria-live');
+    } else {
+      liveRegion.setAttribute('aria-live', val);
+    }
+  }
+
+  function toggleLiveRegion(btnID) {
+    var deToggle = document.querySelectorAll("button.toggleLiveRegion[aria-pressed]");
+    for (var i = 0; i < deToggle.length; i++) {
+      deToggle[i].setAttribute("aria-pressed", "false");
+    }
+    var theButton = document.getElementById(btnID);
+    theButton.setAttribute("aria-pressed", "true");
+    flipLiveRegion(btnID);
+  }
+</script>
+</body>
+</html>
