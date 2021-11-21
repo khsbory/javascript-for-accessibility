@@ -40,11 +40,11 @@ window.addEventListener('load', function() {
   });
 
   $(document).on("click", ":button, [type='button'], [role='button'], [data-role='button']", function (e) {
-    if ($(this).attr("aria-pressed") === undefined) { console.log("if1"); return; } // aria-pressed 속성이 없을 경우 리턴
-    if (beforeAriaLabel !== undefined && beforeAriaLabel !== $(this).attr("aria-label")) { console.log("if2"); return; }
-    if (beforeAriaLabelledby !== undefined && beforeAriaLabelledby !== $(this).attr("aria-labelledby")) { console.log("if3"); return; }
-    if (beforeInnerText !== this.innerText) { console.log("innerText1 : " + beforeInnerText + "\ninnerText2 : " + this.innerText); return; }
-    if (beforeOuterHtml === this.outerHTML){ console.log("outerHtml1 : " + beforeOuterHtml + "\nouterHtml2 : " + this.outerHTML); return; }
+    if ($(this).attr("aria-pressed") === undefined) { return; } // aria-pressed 속성이 없을 경우 리턴
+    if (beforeAriaLabel !== undefined && beforeAriaLabel !== $(this).attr("aria-label")) { return; }
+    if (beforeAriaLabelledby !== undefined && beforeAriaLabelledby !== $(this).attr("aria-labelledby")) { return; }
+    if (beforeInnerText !== this.innerText) { return; }
+    if (beforeOuterHtml === this.outerHTML){ return; }
     if ($(this).attr("aria-pressed") === "true") { // aria-pressed 가 true(누름 상태)면 false 로 변경
       $(this).attr("aria-pressed", "false");
     } else { // aria-pressed 가 undefined 거나 false 면 true 로 변경
