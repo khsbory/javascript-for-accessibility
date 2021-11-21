@@ -6,17 +6,17 @@ try {
   jScript.type = "text/javascript";
   jScript.charset = "utf-8";
   jScript.src = "https://code.jquery.com/jquery-latest.min.js";
-  
-  var jQuery_version = jQuery.fn.jquery.split(".").map(Number); // 페이지에 적용된 jQuery 버전을 가져옴
+
+  var jQuery_current_version = jQuery.fn.jquery.split(".").map(Number); // 페이지에 적용된 jQuery 버전을 가져옴
   var jQuery_minimum_version = 17; // jQuery 최소 버전 1.7.0
-  
-  jQuery_version = jQuery_version[0] * 10 + jQuery_version[1];
-  if (!(jQuery_version >= jQuery_minimum_version)){
-	  document.getElementsByTagName("head")[0].appendChild(jScript);
+
+  jQuery_current_version = jQuery_current_version[0] * 10 + jQuery_current_version[1];
+  if (jQuery_minimum_version > jQuery_current_version){
+    document.getElementsByTagName("head")[0].appendChild(jScript);
   }
-  
+
 } catch { // jQuery가 없을 경우 예외처리 하여 최신 버전을 적용함
-	document.getElementsByTagName("head")[0].appendChild(jScript);
+  document.getElementsByTagName("head")[0].appendChild(jScript);
 }
 
 window.addEventListener('load', function() {
@@ -37,10 +37,10 @@ window.addEventListener('load', function() {
             announceForAccessibility("");
           };
         } else {
-        announceForAccessibility(btn.textContent);
+          announceForAccessibility(btn.textContent);
         };
       };
-          });
+    });
   });
 });
 
@@ -50,10 +50,10 @@ window.addEventListener('load', function() {
  */
 function announceForAccessibility(message) {
   var html = '' +
-    '<div aria-live="polite" name="div_announceForAccessibility" style="border: 0; padding: 0; margin: 0; ' +
-    'position: absolute !important;' + 'height: 1px; width: 1px; overflow: hidden; clip: rect(1px 1px 1px 1px); ' +
-    'clip: rect(1px, 1px, 1px, 1px);' + 'clip-path: inset(50%); white-space: nowrap;">' +
-    '<p name="p_announceForAccessibility"></p></div>';
+      '<div aria-live="polite" name="div_announceForAccessibility" style="border: 0; padding: 0; margin: 0; ' +
+      'position: absolute !important;' + 'height: 1px; width: 1px; overflow: hidden; clip: rect(1px 1px 1px 1px); ' +
+      'clip: rect(1px, 1px, 1px, 1px);' + 'clip-path: inset(50%); white-space: nowrap;">' +
+      '<p name="p_announceForAccessibility"></p></div>';
 
   $("body").append(html); // body 끝에 div_announceForAccessibility 추가
 

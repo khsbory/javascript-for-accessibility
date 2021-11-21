@@ -6,17 +6,17 @@ try {
   jScript.type = "text/javascript";
   jScript.charset = "utf-8";
   jScript.src = "https://code.jquery.com/jquery-latest.min.js";
-  
-  var jQuery_version = jQuery.fn.jquery.split(".").map(Number); // 페이지에 적용된 jQuery 버전을 가져옴
+
+  var jQuery_current_version = jQuery.fn.jquery.split(".").map(Number); // 페이지에 적용된 jQuery 버전을 가져옴
   var jQuery_minimum_version = 17; // jQuery 최소 버전 1.7.0
-  
-  jQuery_version = jQuery_version[0] * 10 + jQuery_version[1];
-  if (!(jQuery_version >= jQuery_minimum_version)){
-	  document.getElementsByTagName("head")[0].appendChild(jScript);
+
+  jQuery_current_version = jQuery_current_version[0] * 10 + jQuery_current_version[1];
+  if (jQuery_minimum_version > jQuery_current_version){
+    document.getElementsByTagName("head")[0].appendChild(jScript);
   }
-  
+
 } catch { // jQuery가 없을 경우 예외처리 하여 최신 버전을 적용함
-	document.getElementsByTagName("head")[0].appendChild(jScript);
+  document.getElementsByTagName("head")[0].appendChild(jScript);
 }
 
 // DOM 을 미리 로드시켜 라이브러리를 정상적으로 작동시키기 위함
@@ -32,6 +32,7 @@ window.addEventListener('load', function() {
   var beforeAriaLabel; // 클릭한 버튼의 aria-label
   var beforeAriaLabelledby; // 클릭한 버튼의 aria-labelledby
   $(document).on("focus", ":button, [type='button'], [role='button'], [data-role='button']", function (e) {
+    if ($(this).attr("aria-pressed") === undefined) { return; }
     beforeOuterHtml = this.outerHTML;
     beforeInnerText = this.innerText;
     beforeAriaLabel = $(this).attr("aria-label");
@@ -39,16 +40,15 @@ window.addEventListener('load', function() {
   });
 
   $(document).on("click", ":button, [type='button'], [role='button'], [data-role='button']", function (e) {
-    if ((beforeAriaLabel === undefined || beforeAriaLabel === $(this).attr("aria-label")) &&
-        (beforeAriaLabelledby === undefined || beforeAriaLabelledby === $(this).attr("aria-labelledby")) &&
-        (beforeInnerText === this.innerText)){
-      if (beforeOuterHtml !== this.outerHTML){
-        if ($(this).attr("aria-pressed") === "true") { // aria-pressed 가 true(누름 상태)면 false 로 변경
-          $(this).attr("aria-pressed", "false");
-        } else { // aria-pressed 가 undefined 거나 false 면 true 로 변경
-          $(this).attr("aria-pressed", "true");
-        }
-      }
+    if ($(this).attr("aria-pressed") === undefined) { console.log("if1"); return; } // aria-pressed 속성이 없을 경우 리턴
+    if (beforeAriaLabel !== undefined && beforeAriaLabel !== $(this).attr("aria-label")) { console.log("if2"); return; }
+    if (beforeAriaLabelledby !== undefined && beforeAriaLabelledby !== $(this).attr("aria-labelledby")) { console.log("if3"); return; }
+    if (beforeInnerText !== this.innerText) { console.log("innerText1 : " + beforeInnerText + "\ninnerText2 : " + this.innerText); return; }
+    if (beforeOuterHtml === this.outerHTML){ console.log("outerHtml1 : " + beforeOuterHtml + "\nouterHtml2 : " + this.outerHTML); return; }
+    if ($(this).attr("aria-pressed") === "true") { // aria-pressed 가 true(누름 상태)면 false 로 변경
+      $(this).attr("aria-pressed", "false");
+    } else { // aria-pressed 가 undefined 거나 false 면 true 로 변경
+      $(this).attr("aria-pressed", "true");
     }
   });
 

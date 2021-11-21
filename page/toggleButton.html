@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>토글 버튼</title>
+</head>
+<body>
+<button aria-pressed="false" class="no-click">1.aria-pressed</button><br>
+<button aria-pressed="false">2.aria-pressed</button><br>
+<button aria-pressed="false" >3.aria-pressed</button><br>
+<button aria-pressed="false" aria-label="">4.aria-pressed, aria-label</button><br>
+<button aria-pressed="false" name="btn-e"></button>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script>
+    $(document).on("click", ":button, [type='button'], [role='button'], [data-role='button']", function (e) {
+        if ($(this).attr("class") == "no-click"){
+            $(this).attr("class", "click");
+        } else {
+            $(this).attr("class", "no-click");
+        }
+    });
+    var i = 1;
+    $("[name='btn-e']").on("click", function () {
+       $(this).text(i++);
+    });
+</script>
+<script src="../js/toggleButton.js"></script>
+</body>
+</html>
