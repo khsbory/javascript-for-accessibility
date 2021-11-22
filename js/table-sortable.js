@@ -27,9 +27,9 @@ window.addEventListener('load', function() {
    * announceForAccessibility 를 호출
    * th > button [role=button], [role=columnheader, rowheader] > button, [role=button]
    */
-  $(document).on("click", "th > :button, th > [role='button'], " +
-      "[role='columnheader'] > :button, [role='columnheader'] > [role='button'], " +
-      "[role='rowheader'] > :button, [role='rowheader'] > [role='button']", function (e) {
+  $(document).on("click", "th > :button, th > [type='button'], th > [role='button'], " +
+      "[role='columnheader'] > :button, [role='columnheader'] > [type='button'], [role='columnheader'] > [role='button'], " +
+      "[role='rowheader'] > :button, [role='rowheader'] > [type='button'], [role='rowheader'] > [role='button']", function (e) {
     // 클릭한 버튼의 부모 요소 클래스를 lowerCase로 변환하여 가져옴
     var $parentClass = $(this).parent().attr("class") !== undefined ? $(this).parent().attr("class").toLowerCase() : "";
 
