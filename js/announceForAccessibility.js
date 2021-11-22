@@ -19,43 +19,54 @@ try {
   document.getElementsByTagName("head")[0].appendChild(jScript);
 }
 
-// DOM 을 미리 로드시켜 라이브러리를 정상적으로 작동시키기 위함
 window.addEventListener('load', function() {
-
-  /**
-   * 토글 버튼 이벤트
-   * DOM의 모든 버튼 (<Button>, <input type="button">,<a role="button"> 등) 클릭 시 발생하는 이벤트 (누름 상태 변경)
-   * aria-pressed = "true" or "false"
-   */
-  var beforeOuterHtml; // 클릭한 버튼의 outerHtml
-  var beforeInnerText; // 클릭한 버튼의 텍스트 내용(태그는 포함하지 않음)
-  var beforeAriaLabel; // 클릭한 버튼의 aria-label
-  var beforeAriaLabelledby; // 클릭한 버튼의 aria-labelledby
-  $(document).on("focus", ":button, [type='button'], [role='button'], [data-role='button']", function (e) {
-    if ($(this).attr("aria-pressed") === undefined) { return; }
-    beforeOuterHtml = this.outerHTML;
-    beforeInnerText = this.innerText;
-    beforeAriaLabel = $(this).attr("aria-label");
-    beforeAriaLabelledby = $(this).attr("aria-labelledby");
+  var btns = document.querySelectorAll('[screen-reader-live]');
+  btns.forEach(function (btn) {
+    btn.addEventListener('click', function() {
+      if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
+        announceForAccessibility("");
+      } else {
+        if (btn.getAttribute("aria-label")) {
+          var ua = navigator.userAgent.toLowerCase();
+          var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+          if(isAndroid) {
+            setTimeout(function() {
+              announceForAccessibility(btn.getAttribute("aria-label"));
+            }, 200);
+          } else {
+            announceForAccessibility("");
+          };
+        } else {
+          announceForAccessibility(btn.textContent);
+        };
+      };
+    });
   });
-
-  $(document).on("click", ":button, [type='button'], [role='button'], [data-role='button']", function (e) {
-	var $this = $(this); // 클릭한 요소의 Object
-	var _this = this; // 클릭한 요소의 태그 요소
-	var timeout = setTimeout(function() {
-		if ($this.attr("aria-pressed") === undefined) { return; } // aria-pressed 속성이 없을 경우 리턴
-		if (beforeAriaLabel !== undefined && beforeAriaLabel !== $this.attr("aria-label")) { return; }
-		if (beforeAriaLabelledby !== undefined && beforeAriaLabelledby !== $this.attr("aria-labelledby")) { return; }
-		if (beforeInnerText !== _this.innerText) { return; }
-		if (beforeOuterHtml === _this.outerHTML){ return; }
-		if ($this.attr("aria-pressed") === "true") { // aria-pressed 가 true(누름 상태)면 false 로 변경
-		  //$(this).attr("aria-pressed", "false");
-		  $this.attr("aria-pressed", "false");
-		} else { // aria-pressed 가 undefined 거나 false 면 true 로 변경
-		  //$(this).attr("aria-pressed", "true");
-		  $this.attr("aria-pressed", "true");
-		}
-	}, 500);
-  });
-  
 });
+
+/**
+ * div 안 p 태그에 메시지 삽입 후 body 끝에 추가하며 2초 후 삭제하는 함수
+ * div 의 name 은 div_announceForAccessibility 를 사용함 (해당 태그를 삭제하기 위함)
+ */
+function announceForAccessibility(message) {
+  var html = '' +
+      '<div aria-live="polite" name="div_announceForAccessibility" style="border: 0; padding: 0; margin: 0; ' +
+      'position: absolute !important;' + 'height: 1px; width: 1px; overflow: hidden; clip: rect(1px 1px 1px 1px); ' +
+      'clip: rect(1px, 1px, 1px, 1px);' + 'clip-path: inset(50%); white-space: nowrap;">' +
+      '<p name="p_announceForAccessibility"></p></div>';
+
+  $("body").append(html); // body 끝에 div_announceForAccessibility 추가
+
+  setTimeout(function () { // 0.02초 후 p 태그에 message 추가
+    $("[name='p_announceForAccessibility']").text(message);
+  }, 20);
+
+  setTimeout(removeAnnounceForAccessibility, 500); // 0.5초 후 div_announceForAccessibility 삭제
+}
+
+/**
+ * div 의 name 이 div_announceForAccessibility 인 태그를 하위까지 삭제
+ */
+function removeAnnounceForAccessibility() {
+  $("[name='div_announceForAccessibility']").remove();
+}
