@@ -5,13 +5,13 @@
 */
 function createDocumentsId(targetValue, type) {  
   // type 이 클래스이며 targetValue의 클래스가 존재할 경우
-  if (type === "class" && document.getElementsByClassName(targetValue) > 0) {
+  if (type === "class" && document.getElementsByClassName(targetValue).length > 0) {
     Array.from(document.getElementsByClassName(targetValue)).forEach(function(els, idx, arr) {
       els.setAttribute("id", targetValue + "_" + idx);
     });
   }
   
-  if (type === "name" && document.getElementsByName(targetValue) > 0) {
+  if (type === "name" && document.getElementsByName(targetValue).length > 0) {
     Array.from(document.getElementsByName(targetValue)).forEach(function(els, idx, arr) {
       els.setAttribute("id", targetValue + "_" + idx);
     });
