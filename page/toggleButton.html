@@ -10,6 +10,10 @@
 <button aria-pressed="false" >3.aria-pressed</button><br>
 <button aria-pressed="false" aria-label="">4.aria-pressed, aria-label</button><br>
 <button aria-pressed="false" name="btn-e"></button>
+<div id="modal">
+    <a id="atag">HELLO!</a></br>
+    <p id="ptag">HELLO!!!</p>
+</div>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <script>
     $(document).on("click", ":button, [type='button'], [role='button'], [data-role='button']", function (e) {
@@ -23,7 +27,11 @@
     $("[name='btn-e']").on("click", function () {
        $(this).text(i++);
     });
+    var $modal = document.getElementById('modal');
+    $modal.addEventListener("click", function (e) {
+        console.log(e.target);
+    })
 </script>
-<script src="../../js/toggleButton.js"></script>
+<script src="../js/toggleButton.js"></script>
 </body>
 </html>
