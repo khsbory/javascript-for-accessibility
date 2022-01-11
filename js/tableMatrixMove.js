@@ -1,5 +1,6 @@
 /**
- * data-name이 tableMatrixMove인 테이블에서 focus 혹은 keyup 시 이벤트 발생 (data-name명 변경 가능)
+ * 마크업은 table에 data-name="tableMatrixMove" (변경 가능)
+ * data-name이 tableMatrixMove인 테이블에서 focus 혹은 keyup 시 이벤트 발생
  * 마우스 클릭 시 해당 위치에서 이동할 수 있도록 focus 이벤트 부여
  * 방향키로 이동 시 해당 위치로 이동할 수 있도록 keyup 이벤트 부여
  * 유의사항 : 테이블의 maxX, maxY값이 일치해야 정상적으로 동작 가능
@@ -10,7 +11,8 @@ var tableMatrixMovesChildren = [];
 tableMatrixMoves.forEach(function (item1, index1) {
     item1.querySelectorAll("tr").forEach(function (item2, index2) {
         item2.querySelectorAll(("th, td")).forEach(function (item3, index3) {
-            tableMatrixMovesChildren.push(item3); //th
+            item3.tabIndex="-1";
+            tableMatrixMovesChildren.push(item3);
             var x = 0; var y = 0; var maxX = 0; var maxY = 0;
 
             item3.addEventListener("focus", function () {
