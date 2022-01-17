@@ -6,9 +6,9 @@ var ariaCntrlChkBoxIdx;
 checkBoxes.forEach(function (checkBox, index) {
     checkBox.tabIndex = 0;
 	
-	if (checkBox.hasAttribute("aria-controls")) {
-		ariaCntrlChkBoxIdx = index;
-	}
+    if (checkBox.hasAttribute("aria-controls")) {
+	ariaCntrlChkBoxIdx = index;
+    }
 	
     checkBox.addEventListener("mousedown", function () {
         checkBoxMousedown();
@@ -30,7 +30,7 @@ checkBoxes.forEach(function (checkBox, index) {
 
 var beforeCheckBoxOuterHTML;
 function checkBoxMousedown() {
-	beforeCheckBoxOuterHTML = checkBoxes[ariaCntrlChkBoxIdx].outerHTML;
+    beforeCheckBoxOuterHTML = checkBoxes[ariaCntrlChkBoxIdx].outerHTML;
 }
 function checkBoxEvent(target) {
     // 클릭한 체크박스 요소에 aria-controls 속성이 있을 경우, 예) 체크박스 전체에 영향을 끼치는 부모 체크박스
@@ -62,13 +62,13 @@ function checkBoxEvent(target) {
         }
     }
 	
-	// 부모 체크박스의 요소를 이전과 비교하여 true or false 처리
-	var afterCheckBox = checkBoxes[ariaCntrlChkBoxIdx];
-	if (beforeCheckBoxOuterHTML !== afterCheckBox.outerHTML) {
-		if (afterCheckBox.getAttribute("aria-checked") === 'true') {
-			afterCheckBox.setAttribute("aria-checked", false);
-		} else {
-			afterCheckBox.setAttribute("aria-checked", true);
-		}
+    // 부모 체크박스의 요소를 이전과 비교하여 true or false 처리
+    var afterCheckBox = checkBoxes[ariaCntrlChkBoxIdx];
+    if (beforeCheckBoxOuterHTML !== afterCheckBox.outerHTML) {
+	if (afterCheckBox.getAttribute("aria-checked") === 'true') {
+	    afterCheckBox.setAttribute("aria-checked", false);
+	} else {
+	    afterCheckBox.setAttribute("aria-checked", true);
 	}
+    }
 }
